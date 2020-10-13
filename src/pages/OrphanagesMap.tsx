@@ -9,6 +9,8 @@ import '../styles/pages/orphanage-map.css';
 import mapMarker from '../images/map-marker.svg';
 
 function OrphanagesMap () {
+
+  console.log(process.env.REACT_APP_MAPBOX_TOKEN)
   return(
     <div id="page-map">
       <aside>
@@ -32,7 +34,10 @@ function OrphanagesMap () {
           height: '100%'
         }}
       >
-        <TileLayer url='https://a.tile.openstreetmap.org/{z}/{x}/{y}.png' />
+        {/* <TileLayer url='https://a.tile.openstreetmap.org/{z}/{x}/{y}.png' /> */}
+        <TileLayer
+          url={`https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`}
+        />
       </Map>
 
       <Link to='' className='create-orphanage'>
