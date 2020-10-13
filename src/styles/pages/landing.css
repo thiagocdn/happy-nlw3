@@ -7,6 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
 }
 
 #page-landing .content-wrapper {
@@ -21,6 +22,8 @@
   align-items: flex-start;
   flex-direction: column;
   justify-content: space-between;
+  background: url('../../images/landing.svg') no-repeat 80% center;
+  padding: 30px;
 }
 
 #page-landing .content-wrapper main {
@@ -33,7 +36,6 @@
   line-height: 70px;
 }
 
-
 #page-landing .content-wrapper main p {
   margin-top: 40px;
   font-size: 24px;
@@ -44,12 +46,39 @@
   position: absolute;
   right: 0;
   top: 0;
+
+  font-size: 24px;
+  line-height: 34px;
+
+  display: flex;
+  flex-direction: column;
+
+  text-align: right;
+}
+
+.content-wrapper .location strong {
+  font-weight: 800;
 }
 
 .content-wrapper .enter-app {
   position: absolute;
   right: 0;
   bottom: 0;
+
+  width: 80px;
+  height: 80px;
+  background: #FFD666;
+  border-radius: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background 0.2s;
+}
+
+.content-wrapper .enter-app:hover {
+  background: #96FEFF;
 }
 
 
