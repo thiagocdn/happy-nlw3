@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, ChangeEvent } from "react";
 import { Map, Marker, TileLayer } from 'react-leaflet';
 import { LeafletMouseEvent } from 'leaflet';
 
@@ -8,8 +8,11 @@ import { FiPlus } from "react-icons/fi";
 import '../styles/pages/create-orphanage.css';
 import Sidebar from "../components/Sidebar";
 import mapIcon from "../utils/mapIcon";
+import api from "../services/api";
+import { useHistory } from "react-router-dom";
 
 export default function CreateOrphanage() {
+  const history = useHistory();
   const [position, setPosition] = useState({ latitude: 0, longitude: 0 })
   
   const [name, setName] = useState('');
@@ -17,6 +20,8 @@ export default function CreateOrphanage() {
   const [instructions, setInstructions] = useState('');
   const [opening_hours, setOpening_hours] = useState('');
   const [open_on_weekends, setOpen_on_weekends] = useState(true);
+  const [images, setImages] = useState<File[]>([]);
+  const [previewImages, setPreviewImages] = useState<string[]>([])
 
   function hanleMapClick(event: LeafletMouseEvent) {
     const { lat, lng } = event.latlng;
@@ -26,23 +31,45 @@ export default function CreateOrphanage() {
     })
   }
 
-  function handleSelectImages() {
-    
+  function handleSelectImages(event: ChangeEvent<HTMLInputElement>) {
+    if(!event.target.files) {
+      return;
+    }
+
+    const selectedImages = Array.from(event.target.files);
+
+    setImages(selectedImages);
+
+    const selectedImagesPreview = selectedImages.map(image => {
+      return URL.createObjectURL(image);
+    });
+
+    setPreviewImages(selectedImagesPreview);
   }
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const { latitude, longitude } = position;
     
-    console.log({
-      latitude,
-      longitude,
-      name,
-      about,
-      instructions,
-      opening_hours,
-      open_on_weekends,
+    const data = new FormData();
+
+    data.append('name', name);
+    data.append('about', about);
+    data.append('latitude', String(latitude));
+    data.append('longitude', String(longitude));
+    data.append('instructions', instructions);
+    data.append('opening_hours', opening_hours);
+    data.append('open_on_weekends', String(open_on_weekends));
+    
+    images.forEach(image => {
+      data.append('images', image);
     })
+    
+    await api.post('orphanages', data);
+
+    alert('Cadastro realizado com sucesso!');
+
+    history.push('/app')
   }
 
   return (
@@ -56,7 +83,7 @@ export default function CreateOrphanage() {
             <legend>Dados</legend>
 
             <Map 
-              center={[-27.2092052,-49.6401092]} 
+              center={[-22.9722666,-46.9902287]} 
               style={{ width: '100%', height: 280 }}
               zoom={15}
               onclick={hanleMapClick}
@@ -95,6 +122,13 @@ export default function CreateOrphanage() {
               <label htmlFor="images">Fotos</label>
 
               <div className="images-container">
+
+                {previewImages.map(image => {
+                  return (
+                    <img key={image} src={image} alt={name}/>
+                  )
+                })}
+
                 <label htmlFor="image[]" className="new-image">
                   <FiPlus size={24} color="#15b6d6" />
                 </label>
